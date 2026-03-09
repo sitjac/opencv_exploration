@@ -5,8 +5,8 @@ cmake_minimum_required(VERSION 3.15)
 #
 
 project(
-  "Project"
-  VERSION 0.1.0
+  "OpencvExploration"
+  VERSION 0.0.1
   LANGUAGES CXX
 )
 
@@ -110,11 +110,20 @@ else()
   endif()
 endif()
 
+add_executable(${PROJECT_NAME}_app src/main.cpp)
+target_link_libraries(${PROJECT_NAME}_app PRIVATE ${PROJECT_NAME})
+
 set_target_properties(
   ${PROJECT_NAME}
   PROPERTIES
   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}"
+)
+set_target_properties(
+  ${PROJECT_NAME}_app
+  PROPERTIES
+  OUTPUT_NAME ${PROJECT_NAME}
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}"
 )
 if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
