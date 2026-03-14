@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.15)
 #
 
 project(
-  "OpencvExploration"
+  "opencv_exploration"
   VERSION 0.0.1
   LANGUAGES CXX
 )
@@ -291,15 +291,15 @@ install(
 
 configure_file(
   ${CMAKE_CURRENT_LIST_DIR}/cmake/version.hpp.in
-  include/${PROJECT_NAME_LOWERCASE}/version.hpp
+  include/${PROJECT_NAME}/version.hpp
   @ONLY
 )
 
 install(
   FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/include/${PROJECT_NAME_LOWERCASE}/version.hpp
+  ${CMAKE_CURRENT_BINARY_DIR}/include/${PROJECT_NAME}/version.hpp
   DESTINATION
-  include/${PROJECT_NAME_LOWERCASE}
+  include/${PROJECT_NAME}
 )
 
 #
@@ -308,7 +308,7 @@ install(
 
 install(
   DIRECTORY
-  include/${PROJECT_NAME_LOWERCASE}
+  include/${PROJECT_NAME}
   DESTINATION
   include
 )

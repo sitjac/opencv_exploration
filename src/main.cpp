@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "project/tmp.hpp"
+#include "opencv_exploration/tmp.hpp"
 
 int main()
 {

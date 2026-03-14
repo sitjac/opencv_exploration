@@ -3,6 +3,7 @@
 CMakeCache.*
 CMakeFiles/*
 [Tt]esting/*
+[Bb]uild-*/
 
 ### VisualStudioCode ###
 .vscode/*
@@ -14,6 +15,7 @@ CMakeFiles/*
 ### VisualStudioCode Patch ###
 # Ignore all local history of files
 .history
+.local
 
 ### VisualStudio ###
 ## Ignore Visual Studio temporary files, build results, and
