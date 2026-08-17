@@ -8,7 +8,7 @@ set(exe_sources
 )
 
 set(headers
-    include/opencv_exploration/tmp.hpp
+    include/visionlab/tmp.hpp
 )
 
 set(test_sources

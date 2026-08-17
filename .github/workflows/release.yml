@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 env:
-  PROJECT_NAME: "opencv_exploration"
+  PROJECT_NAME: "vision-lab"
   BUILD_TYPE: Release
 
 jobs:

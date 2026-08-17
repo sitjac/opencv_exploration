@@ -1,4 +1,4 @@
-# OpenCV Exploration
+# vision-lab
 
 A modern C++ projects to explore the OpenCV library and its features.
 
