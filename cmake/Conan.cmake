@@ -3,17 +3,17 @@ if(${PROJECT_NAME}_ENABLE_CONAN)
   # Declare the Conan packages here.
   #
   list(APPEND CONAN_CMAKE_PACKAGES
-      opencv/4.11.0
+      opencv/4.5.5
   )
 
   #
   # Declare the Conan options here.
   #
-  list(APPEND CONAN_CMAKE_OPTIONS
-      opencv:shared=True
-      opencv:with_gtk=False
-      opencv:with_wayland=False
-  )
+  list(APPEND CONAN_CMAKE_OPTIONS opencv:shared=True)
+  # The OpenCV recipe only defines the `with_gtk` option on Linux.
+  if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    list(APPEND CONAN_CMAKE_OPTIONS opencv:with_gtk=False)
+  endif()
 
   #
   # If `conan.cmake` (from https://github.com/conan-io/cmake-conan) does not exist, download it.
@@ -74,6 +74,7 @@ if(${PROJECT_NAME}_ENABLE_CONAN)
   conan_cmake_install(
     PATH_OR_REFERENCE .
     BUILD missing
+    REMOTE conancenter
     SETTINGS ${settings}
     INSTALL_FOLDER "${CMAKE_BINARY_DIR}/conan"
   )

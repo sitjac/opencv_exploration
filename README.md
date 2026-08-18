@@ -32,6 +32,19 @@ cmake --build --preset debug
 ./build/bin/Debug/visionlab
 ```
 
+### Docker
+
+A ready-to-use development environment is provided by the `Dockerfile`
+
+```bash
+docker build -t visionlab .
+docker run --rm -it -v "$(pwd)":/workspace -v visionlab-conan:/root/.conan -w /workspace visionlab
+cmake --preset debug
+cmake --build --preset debug
+./build/bin/Debug/visionlab
+```
+
+
 ## Contributing
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our how you can

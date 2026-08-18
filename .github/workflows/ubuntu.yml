@@ -13,7 +13,7 @@ env:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[ci skip]')"
 
     steps:
@@ -28,10 +28,12 @@ jobs:
           ${{ runner.os }}-conan-
 
     - name: install Conan 1
-      run: python3 -m pip install --break-system-packages conan==1.65.0
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install --break-system-packages conan==1.65.0
 
     - name: configure Conan remote
-      run: conan remote update conancenter https://center2.conan.io -f || conan remote add conancenter https://center2.conan.io -f
+      run: conan remote update conancenter https://center.conan.io || true
       
     - name: cache dependencies
       uses: actions/cache@v4

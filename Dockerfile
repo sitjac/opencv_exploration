@@ -1,52 +1,38 @@
-FROM ubuntu:18.04
+# Development environment for vision-lab.
+# Uses the project flow: Conan 1 + cmake-conan 0.18.1 + CMakePresets.
+FROM ubuntu:24.04
 
-RUN echo "Updating Ubuntu"
-RUN apt-get update && apt-get upgrade -y
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN echo "Updating Ubuntu..."
+RUN apt-get update
+RUN apt-get upgrade -y
 
 RUN echo "Installing dependencies..."
-RUN apt install -y \
-			ccache \
-			clang \
-			clang-format \
-			clang-tidy \
-			cppcheck \
-			curl \
-			doxygen \
-			gcc \
-			git \
-			graphviz \
-			make \
-			ninja-build \
-			python3 \
-			python3-pip \
-			tar \
-			unzip \
-			vim
+RUN apt-get install -y --no-install-recommends \
+        build-essential \
+        ccache \
+        cmake \
+        curl \
+        doxygen \
+        git \
+        graphviz \
+        ninja-build \
+        pkg-config \
+        python3 \
+        python3-pip \
+        tar \
+        unzip
 
-RUN echo "Installing dependencies not found in the package repos..."
+RUN echo "Installing Conan 1..."
+RUN python3 -m pip install --break-system-packages --no-cache-dir conan==1.65.0
 
-RUN apt install -y wget tar build-essential libssl-dev && \
-			wget https://github.com/Kitware/CMake/releases/download/v3.15.0/cmake-3.15.0.tar.gz && \
-			tar -zxvf cmake-3.15.0.tar.gz && \
-			cd cmake-3.15.0 && \
-			./bootstrap && \
-			make && \
-			make install 
-
-RUN pip3 install conan
-
-RUN git clone https://github.com/catchorg/Catch2.git && \
-		 cd Catch2 && \
-		 cmake -Bbuild -H. -DBUILD_TESTING=OFF && \
-		 cmake --build build/ --target install
-
-# Disabled pthread support for GTest due to linking errors
-RUN git clone https://github.com/google/googletest.git --branch release-1.10.0 && \
-        cd googletest && \
-        cmake -Bbuild -Dgtest_disable_pthreads=1 && \
-        cmake --build build --config Release && \
-        cmake --build build --target install --config Release
-
-RUN git clone https://github.com/microsoft/vcpkg -b 2020.06 && \
-		cd vcpkg && \
-		./bootstrap-vcpkg.sh -disableMetrics -useSystemBinaries	
+# Usage (latest flow):
+#   docker build -t visionlab .
+#   docker run --rm -it -v "$(pwd)":/workspace -v visionlab-conan:/root/.conan -w /workspace visionlab
+#   cmake --preset debug
+#   cmake --build --preset debug
+#   ./build/bin/Debug/visionlab
+#
+# The first configure downloads/builds OpenCV through Conan (opencv/4.5.5);
+# the named volume keeps the Conan cache between runs, so later builds are fast.
