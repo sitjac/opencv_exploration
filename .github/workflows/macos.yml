@@ -18,6 +18,20 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: cache Conan
+      uses: actions/cache@v4
+      with:
+        path: ~/.conan
+        key: ${{ runner.os }}-conan-${{ hashFiles('cmake/Conan.cmake') }}
+        restore-keys: |
+          ${{ runner.os }}-conan-
+
+    - name: install Conan 1
+      run: python3 -m pip install --break-system-packages conan==1.65.0
+
+    - name: configure Conan remote
+      run: conan remote update conancenter https://center2.conan.io -f || conan remote add conancenter https://center2.conan.io -f
       
     - name: cache dependencies
       uses: actions/cache@v4
@@ -37,16 +51,15 @@ jobs:
         cmake --build build --target install --config Release
 
     - name: configure
-      run: cmake -Bbuild -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/$INSTALL_LOCATION
+      run: cmake --preset release -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/$INSTALL_LOCATION
       
     - name: build
-      run: cmake --build build --config $BUILD_TYPE -j4
+      run: cmake --build --preset release
 
     - name: run tests
       run: |
-        cd build
+        cd build-release
         ctest -C $BUILD_TYPE -VV
 
     - name: install project
-      run: cmake --build build --target install --config Release 
-
+      run: cmake --build build-release --target install --config Release 

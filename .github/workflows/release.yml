@@ -61,6 +61,26 @@ jobs:
       with:
         submodules: recursive
 
+    - name: cache Conan
+      uses: actions/cache@v4
+      with:
+        path: ${{ runner.os == 'Windows' && 'C:/Users/runneradmin/.conan' || '~/.conan' }}
+        key: ${{ runner.os }}-conan-${{ hashFiles('cmake/Conan.cmake') }}
+        restore-keys: |
+          ${{ runner.os }}-conan-
+
+    - name: install Conan 1
+      shell: bash
+      run: |
+        if [ "$RUNNER_OS" = "Windows" ]; then
+          python -m pip install --break-system-packages conan==1.65.0
+        else
+          python3 -m pip install --break-system-packages conan==1.65.0
+        fi
+
+    - name: configure Conan remote
+      run: conan remote update conancenter https://center2.conan.io -f || conan remote add conancenter https://center2.conan.io -f
+
     - name: cache dependencies
       uses: actions/cache@v4
       id: cache
@@ -79,14 +99,14 @@ jobs:
         cmake --build build --target install --config Release
 
     - name: configure
-      run: cmake -Bbuild -DCMAKE_INSTALL_PREFIX="$HOME/.local"
+      run: cmake --preset release -DCMAKE_INSTALL_PREFIX="$HOME/.local"
       
     - name: build
-      run: cmake --build build --config "$env:BUILD_TYPE" -j4
+      run: cmake --build --preset release
 
     - name: run tests
       run: |
-        cd build
+        cd build-release
         ctest -C "$env:BUILD_TYPE" -VV
 
     # for a release not containing directly the source code, replace the files archived
@@ -95,14 +115,14 @@ jobs:
     - name: generate archive (Windows)
       if: ${{ runner.os == 'Windows' }}
       run: |
-        rmdir -r -fo build
+        rmdir -r -fo build-release
         7z a -tzip $HOME/artifact.zip *
 
 
     - name: generate archive
       if: ${{ runner.os != 'Windows' }}
       run: |
-        rm -rf build
+        rm -rf build-release
         tar -cvzf $HOME/artifact.tar.gz .
 
     - name: upload artifacts

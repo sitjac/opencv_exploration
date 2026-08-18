@@ -27,8 +27,9 @@ machine for development and testing purposes.
 ### Build
 
 ```bash
-cmake -B build
-cmake --build
+cmake --preset debug
+cmake --build --preset debug
+./build/bin/Debug/visionlab
 ```
 
 ## Contributing
