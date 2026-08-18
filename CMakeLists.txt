@@ -136,6 +136,12 @@ if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
   )
 endif()
 
+# Expose the SDK version to the sources.
+target_compile_definitions(${PROJECT_NAME} PUBLIC VISIONLAB_SDK_VERSION="${PROJECT_VERSION}")
+if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
+  target_compile_definitions(${PROJECT_NAME}_LIB PUBLIC VISIONLAB_SDK_VERSION="${PROJECT_VERSION}")
+endif()
+
 message(STATUS "Added all header and implementation files.\n")
 
 #

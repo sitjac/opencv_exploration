@@ -1,16 +1,16 @@
 set(sources
-    src/tmp.cpp
+    src/core/version_info.cpp
 )
 
 set(exe_sources
-		src/main.cpp
-		${sources}
+    src/main.cpp
+    ${sources}
 )
 
 set(headers
-    include/visionlab/tmp.hpp
+    include/visionlab/version_info.hpp
 )
 
 set(test_sources
-  src/tmp_test.cpp
+  src/version_test.cpp
 )
