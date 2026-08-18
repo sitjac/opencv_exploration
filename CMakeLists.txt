@@ -10,11 +10,6 @@ project(
   LANGUAGES CXX
 )
 
-#
-# Set project options
-#
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "") # works
-
 include(cmake/StandardSettings.cmake)
 include(cmake/StaticAnalyzers.cmake)
 include(cmake/Utils.cmake)
@@ -334,8 +329,9 @@ verbose_message("Install targets successfully built. Install with `cmake --build
 #
 
 include(CMakePackageConfigHelpers)
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/cmake")
 write_basic_package_version_file(
-  ${PROJECT_NAME}ConfigVersion.cmake
+  ${CMAKE_BINARY_DIR}/cmake/${PROJECT_NAME}ConfigVersion.cmake
   VERSION
   ${PROJECT_VERSION}
   COMPATIBILITY
@@ -344,15 +340,15 @@ write_basic_package_version_file(
 
 configure_package_config_file(
   ${CMAKE_CURRENT_LIST_DIR}/cmake/${PROJECT_NAME}Config.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+  ${CMAKE_BINARY_DIR}/cmake/${PROJECT_NAME}Config.cmake
   INSTALL_DESTINATION
   ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
 )
 
 install(
   FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
-  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
+  ${CMAKE_BINARY_DIR}/cmake/${PROJECT_NAME}Config.cmake
+  ${CMAKE_BINARY_DIR}/cmake/${PROJECT_NAME}ConfigVersion.cmake
   DESTINATION
   ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
 )
