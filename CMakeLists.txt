@@ -191,6 +191,14 @@ include(cmake/Doxygen.cmake)
 #  )
 #endif()
 
+# OpenCV is provided through Conan (see cmake/Conan.cmake) when enabled.
+if(${PROJECT_NAME}_ENABLE_CONAN)
+  target_link_libraries(${PROJECT_NAME} PUBLIC opencv::opencv)
+  if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
+    target_link_libraries(${PROJECT_NAME}_LIB PUBLIC opencv::opencv)
+  endif()
+endif()
+
 # For Windows, it is necessary to link with the MultiThreaded library.
 # Depending on how the rest of the project's dependencies are linked, it might be necessary
 # to change the line to statically link with the library.
