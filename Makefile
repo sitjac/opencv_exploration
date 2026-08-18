@@ -44,12 +44,11 @@ coverage: ## check code coverage quickly GCC
 	cd .. && (bash -c "find . -type f -name '*.gcno' -exec gcov -pb {} +" || true)
 
 docs: ## generate Doxygen HTML documentation, including API docs
-	rm -rf docs/
 	rm -rf build/
 	cmake -Bbuild -DCMAKE_INSTALL_PREFIX=$(INSTALL_LOCATION) -Dvisionlab_ENABLE_DOXYGEN=1
 	cmake --build build --config Release
 	cmake --build build --target doxygen-docs
-	$(BROWSER) docs/html/index.html
+	$(BROWSER) build/docs/html/index.html
 
 install: ## install the package to the `INSTALL_LOCATION`
 	rm -rf build/
