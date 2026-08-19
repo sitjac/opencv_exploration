@@ -71,6 +71,12 @@ if(${PROJECT_NAME}_ENABLE_CONAN)
 
   conan_cmake_autodetect(settings)
 
+  # The OpenCV 4.5.5 prebuilt binaries on Conan Center were built without an
+  # explicit cppstd setting; the project already enforces C++17 through CMake.
+  if(WIN32)
+    list(FILTER settings EXCLUDE REGEX "^compiler.cppstd=")
+  endif()
+
   conan_cmake_install(
     PATH_OR_REFERENCE .
     BUILD missing

@@ -13,7 +13,7 @@ env:
 jobs:
   build:
 
-    runs-on: windows-latest
+    runs-on: windows-2019
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[ci skip]')"
 
     steps:
@@ -51,10 +51,10 @@ jobs:
         cmake --build build --target install --config Release
 
     - name: configure
-      run: cmake --preset release "-DCMAKE_INSTALL_PREFIX=$env:GITHUB_WORKSPACE/$env:INSTALL_LOCATION"
+      run: cmake --preset release "-DCMAKE_INSTALL_PREFIX=$env:GITHUB_WORKSPACE/$env:INSTALL_LOCATION" -G "Visual Studio 16 2019" -A x64
       
     - name: build
-      run: cmake --build --preset release
+      run: cmake --build --preset release --config Release
 
     - name: run tests
       run: |

@@ -20,7 +20,7 @@ jobs:
         - {
             name: "Windows Latest MSVC",
             artifact_ext: '.zip',
-            os: windows-latest,
+            os: windows-2019,
             cc: "cl",
             cxx: "cl",
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
@@ -97,6 +97,35 @@ jobs:
     - name: configure Conan remote
       run: conan remote update conancenter https://center.conan.io || true
 
+    - name: extend Conan settings for current compiler
+      if: runner.os == 'macOS'
+      run: |
+        python3 - <<'EOF'
+        import os, re
+        from pathlib import Path
+        from conans.client.conf import get_default_settings_yml
+
+        out = os.popen("clang --version").read()
+        m = re.search(r"version (\d+)\.(\d+)", out)
+        if not m:
+            raise SystemExit("Could not detect clang version")
+        version = f"{m.group(1)}.{m.group(2)}"
+
+        home = Path.home() / ".conan"
+        home.mkdir(exist_ok=True)
+        text = get_default_settings_yml()
+        m2 = re.search(r"(apple-clang:.*?version: \[)([^\]]*)(\])", text, re.S)
+        if m2:
+            prefix, body, suffix = m2.group(1), m2.group(2), m2.group(3)
+            items = [item.strip() for item in body.split(",") if item.strip()]
+            if version not in [item.strip('"') for item in items]:
+                items.append(f'"{version}"')
+                body = ", ".join(items)
+                text = text[:m2.start(2)] + body + text[m2.end(2):]
+        (home / "settings.yml").write_text(text)
+        print(f"Extended Conan settings with apple-clang {version}")
+        EOF
+
     - name: cache dependencies
       uses: actions/cache@v4
       id: cache
@@ -114,16 +143,21 @@ jobs:
         cmake --build build --config Release
         cmake --build build --target install --config Release
 
+    - name: configure (Windows)
+      if: runner.os == 'Windows'
+      run: cmake --preset release -DCMAKE_INSTALL_PREFIX="$HOME/.local" -G "Visual Studio 16 2019" -A x64
+
     - name: configure
+      if: runner.os != 'Windows'
       run: cmake --preset release -DCMAKE_INSTALL_PREFIX="$HOME/.local"
       
     - name: build
-      run: cmake --build --preset release
+      run: cmake --build --preset release --config Release
 
     - name: run tests
       run: |
         cd build-release
-        ctest -C "$env:BUILD_TYPE" -VV
+        ctest -C Release -VV
 
     # for a release not containing directly the source code, replace the files archived
     # with the actual files needed (i.e. *.lib/*.a and *.h(pp))
